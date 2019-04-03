@@ -1,0 +1,90 @@
+<!DOCTYPE html> 
+<head>
+        <meta charset="UTF-8">
+        <title>ARM版本使用说明</title>
+        <!--base href="http://klgaming.ngrok.xiaomiqiu.cn/site/"-->
+        <link rel="stylesheet" type="text/css" href="./css/main.css">
+        <link rel="stylesheet" href="../css/entry.css" />
+        <link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
+    </head>
+    <body> 
+        <div class="wrapper">
+            <div id="web_bg" style="background-image: url(./images/bgi.jpg);"></div>
+        </div>
+        <div class="imgblock">
+                <a href="https://steamcommunity.com/groups/kuailegaming"><img class="mid-pic" src="./images/klg.png" width="200" height="200"></a>
+            </div>  
+        <div class="entry">      
+        <h2 >ARM版本使用说明</h2> <br><br>
+        <h4>在Debian ARMhf上部署.NET Core运行时v2.2</h2><hr>
+        <p>部署的前半部分是注册密钥，这部分可以参见微软官网的详细步骤：<a href="https://dotnet.microsoft.com/download/linux-package-manager/debian9/runtime-current">在Debian 9上注册密钥</a><br>
+        以下是需要运行的<strong>完整命令：</strong></p>
+        <div class="pannel" id="code" >
+            <code><ul>
+            <li>wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg
+            <li>sudo mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/
+            <li>wget -q https://packages.microsoft.com/config/debian/9/prod.list
+            <li>sudo mv prod.list /etc/apt/sources.list.d/microsoft-prod.list
+            <li>sudo chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+            <li>sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list
+            </ul></code>
+        </div>
+        <p><br>
+        <br>接下来，由于某些蛋疼原因，在微软官网上的剩余步骤无法顺利在ARM版本的Linux上实现。我们需要使用wget命令手动下载二进制文件包：</p>
+        <div class="pannel" id="code" style="height:6em">
+            <code><ul>
+               <li> wget https://download.visualstudio.microsoft.com/download/pr/5ca39d79-c65c-4c03-bba1-e904c7255c44/4fb100d62b0a3fff5fbf5dd24f761d71/aspnetcore-runtime-2.2.2-linux-arm.tar.gz
+            </ul></code>
+        </div>
+        <p>然后使用tar命令解压到/opt/dotnet，在此之前需要先创建好该文件夹：</p>
+        <div class="pannel" id="code" style="height:5em">
+        <code><ul><li>mkdir /opt/dotnet <br>
+            <li>sudo tar -xvf aspnetcore-runtime-2.2.2-linux-arm.tar.gz -C /opt/dotnet/</ul></code></div>
+        <p>最后建立好必需的软链接。当然，你也可以一开始就解压到/usr/local/bin里</p>
+        <div class="pannel" id="code" style="height:2em">
+            <code><ul><li>sudo ln -s /opt/dotnet/dotnet /usr/local/bin</ul></code>
+        </div>
+        <p>到这里Runtime应该安装完成了。输入<strong>dotnet --info</strong>来检验安装是否成功。理论上应该会显示.NET Core运行时的版本信息。<br><br>
+        然而这里还有一个坑：.NET Core依赖的libssl库是1.0版本的，而最新版的Debian ARM镜像上只有1.1版本，也就是说，必须要想办法降级。
+        通常情况下。包管理器中是不会保留有依赖的旧版本的。这意味着无法简单地通过<strong> apt-get install openssl=1.0 </strong>来完成降级。唯一的办法是手动下载预编译文件，
+        幸好Debian官方非常良心地开设了一个保留有旧版本历史快照的<a href="http://snapshot.debian.org/package">网址</a>。<br>
+        先使用<strong>apt-get purge</strong>命令卸载现有的Openssl包。接下来需要按顺序wget并安装：<br><br>
+        <a href="http://snapshot.debian.org/archive/debian/20160926T223854Z/pool/main/o/openssl/libssl1.0.2_1.0.2j-1_armhf.deb">libssl1.0.2 1.0.2j-1</a><br>
+        <a href="http://snapshot.debian.org/archive/debian/20160926T223854Z/pool/main/o/openssl/libssl1.0.2-dbg_1.0.2j-1_armhf.deb">libssl1.0.2-dbg 1.0.2j-1</a><br>
+        <a href="http://snapshot.debian.org/archive/debian/20160926T223854Z/pool/main/o/openssl/openssl_1.0.2j-1_armhf.deb">openssl_1.0.2j-1_armhf.deb</a><br><br>
+        据实测，<strong>必须</strong>严格按照上面的顺序进行安装，因为这些包以一定的先后顺序形成了依赖关系，不按照顺序安装是装不上的。
+        </p>
+        <br><br>
+        <h4 class="vice_heading">部署HttpCore到Linux ARM</h4><hr>
+        <p>最后一步,把程序部署到操作系统里。程序可以使用<strong> wget </strong>下载，也可以手动在<a href="./downloads/hc.tar" target="_blank">这里</a>下载打包好的tar。解压路径可以随意选择，建议选择/home/~/hc/。
+        需要运行时，<strong>cd</strong>到安装目录内，在命令行中输入<strong>./Http.Core</strong>就可以开始运行程序了。</p>
+        <p><strong style="color:rgb(157, 243, 123)"><br>[注]</strong> 由于Linux下无法调用Windows系统链库kernel32.dll，v1.1版本<strong>无法读取</strong>ini配置文件。为了解决这个问题，在这个版本中使用了JSON文件代替ini文件。</p>    
+        <br>
+        <br>
+        <h4 class="vice_heading">部署Endpoint到Linux ARM</h4>
+        <hr>
+        <p>可以手动在<a href="./downloads/Endpoint_Core.tar" target="_blank">这里</a>下载打包好的tar。解压路径同样可以随意选择，建议选择/home/~/Endpoint/。
+            </p>
+        <p><strong style="color:rgb(157, 243, 123)"><br>[注]</strong>
+            注意程序的工作目录内必须还有一个data文件夹，里面存好排行榜的SQLite数据库<strong>"data.db"</strong>，否则程序无法正常提供数据。</p>
+        <br>
+        <br>
+        <hr>
+        </div>>
+        
+    <div style="margin: auto;  width: 150px">
+        <a href="./index.html"><img id=lanren src="./images/lanren.png" width="150px" style="top:0px;left:0px"></a>
+    </div>
+    
+    <div class=adoblock>
+            <audio src="./downloads/001.mp3" controls="controls" width="480px">
+                    你的浏览器太洗了，不支持HTML5
+        </audio>
+    </div>
+    <!--p>
+        <blockquote><small>一个人应该有能力换尿布、策划侵略战争、杀猪、开轮船、设计建筑、写十四行诗、
+                平衡收支、砌墙、接脱臼的骨头、安慰临终之人、写菜单、发布命令、合作、独立工作、解方程、分析新问题、施肥、编程、
+                做可口的饭菜、高效战斗、勇敢死去。只有昆虫才分工。<br>——罗伯特.安森.海因莱因</small></blockquote>
+    </p>-->
+    </body> 
+</html>

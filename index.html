@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="jq.js"></script>
+    <meta charset="UTF-8">
+    <title>KLGaming Official Site</title>
+    <link rel="stylesheet" type="text/css" href="./css/main.css">    
+    <link rel="stylesheet" href="./css/entry.css" />
+    <link rel="icon" href="./images/favicon.ico" type="image/x-icon"/>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div id="web_bg" style="background-image: url(./images/bgi.jpg);"></div>
+    </div>
+    <div class="imgblock">
+            <a href="https://steamcommunity.com/groups/kuailegaming" target="_blank"><img class="mid-pic" src="./images/klg.png" width="200" height="200"></a>
+    </div>   
+    <h1 class="main_heading">KLG Official Site</h1>
+    <h2 class="main_heading">首页</h2>
+    <div class="entry">
+    <h4>游戏</h4>
+    <ul>
+        <li><a href="./pig2019.html" >猪圈2019</a>
+            <p>突然发现排行榜因为CORS的问题突然记录不了新纪录 对不起我是傻逼我给全国人民谢罪</p>
+            <br>
+    </ul>
+    <h4>项目</h4>
+    <ul>
+        <li><a href="./project/1-001.html" >A New Kind of Science</a></p>
+        <p>当前更新：第[1]期</p>
+        <br>
+        <li><a href="./project/httpbot.html" >HttpBot</a></p>
+        <p>钓鱼网站制裁工具</p>
+        <br>
+        <li><a href="./project/endpoint.html" >Endpoint</a></p>
+        <p>用C#开发的本站服务器后端</p>
+        <br>
+    </ul>
+    <h4>杂项</h4>
+    <ul>
+        <li><a href="./sry.html">KLG俱乐部</a>
+            <p>电子竞技的真谛是快乐(现在是404，我还没写)</p>
+            <br>
+        <li><a href="./resource.html" target="_blank">其他内容</a>
+            <p>可能有用，也可能没用</p>
+    </ul>
+    <br><br>
+    <p id="ip"></p>
+    </div>
+    <a href="./index.html" id="lanren"><img id="in_lanren" src="./images/_lanren.png" width="222"></a>
+    <div class="center">
+        <div class=adoblock>
+            <audio src="./downloads/zty.mp3" controls="controls" width="480px">
+                你的浏览器太洗了，不支持HTML5
+            </audio>
+        </div>
+    </div>
+</body>
+
+<script>
+    $.getJSON("https://api.ipify.org?format=json",
+            function (ipa)
+            {
+                var ip = document.getElementById("ip");
+                ip.innerHTML = "<hr><br><small>你的ip地址是：</small><strong>" + ipa.ip + "</strong>";
+            }
+        );
+</script>
+
+</html>

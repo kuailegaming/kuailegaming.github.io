@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <link rel="stylesheet" href="./css/entry.css" />
+    <link rel="icon" href="./images/favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+    <div class="wrapper">
+        <div id="web_bg" style="background-image: url(./images/bgi.jpg);"></div>
+    </div>
+    <div class="imgblock">
+        <a href="https://steamcommunity.com/groups/kuailegaming" target="_blank"><img class="mid-pic"
+                src="./images/klg.png" width="200" height="200"></a>
+    </div>
+    <h1 class="main_heading"></h1>
+        <canvas id="cv" width="800px" height="600px" style="border:1px solid #000000;background-color: #000000;margin-left: 12%">
+        </canvas>
+    <div class="center">
+        <a href="./index.html"><img id="in_lanren" src="./images/lanren.png" width="160px"></a>
+        <div class=adoblock>
+            <audio src="./downloads/zty.mp3" controls="controls" width="480px">
+                你的浏览器太洗了，不支持HTML5
+            </audio>
+        </div>
+    </div>
+</body>
+    <script>
+        var R="244";var G="152"; var B = "203";
+        var k=1;
+        var cv = document.getElementById("cv");
+        var ctx = cv.getContext('2d');
+        var lux=1;
+        for (var i=0;i<800;i++)
+        {
+            for (var j=0;j<600;j++)
+            {
+                var d= D(i, j, 400, 300);
+                if (d<=60)
+                {
+                    lux=1;
+                }
+                else
+                {
+                    lux=60/(d+1);
+                }
+                var newColor;
+                srcColor=ctx.getImageData(i, j, 1, 1).data;
+                var srcR=srcColor[0]; var srcG = srcColor[1]; var srcB = srcColor[2];
+                var newR=k*lux*(srcR+R)/2; var newG = k * lux *(srcG + G) / 2; var newB = k * lux *(srcB + B) / 2;
+                console.log(newR);
+                if (newR>255)
+                {
+                    newR=255;
+                }
+                if (newG > 255)
+                {
+                    newG = 255;
+                }
+                if (newB > 255)
+                {
+                    newB = 255;
+                }
+                dPoint(ctx,i,j,newR+","+newG+","+newB);
+            }
+        }
+        function dPoint(ctx,x,y,color)
+        {
+            ctx.fillStyle=color;
+            ctx.fillRect(x,y,1,1);
+        }
+        function D(x1,y1,x2,y2)
+        {
+            return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2));
+        }
+    </script>
+</html>
